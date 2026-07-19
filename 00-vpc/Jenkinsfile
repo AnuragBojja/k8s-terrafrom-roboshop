@@ -19,6 +19,7 @@ pipeline {
             steps {
                 withAWS(region: 'us-east-1', credentials: 'aws-cred'){
                     sh """
+                    cd 00-vpc
                     terraform init
                     ls -l
                     pwd
@@ -29,7 +30,12 @@ pipeline {
         stage("plan") {
             steps {
                 withAWS(region: 'us-east-1', credentials: 'aws-cred'){
-                    sh "terraform plan"
+                    sh """
+                    cd 00-vpc
+                    terraform plan
+                    ls -l
+                    pwd
+                    """
                 }
             }
         }
