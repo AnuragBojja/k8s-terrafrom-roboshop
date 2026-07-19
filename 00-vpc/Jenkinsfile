@@ -18,8 +18,10 @@ pipeline {
         stage("init") {
             steps {
                 withAWS(region: 'us-east-1', credentials: 'aws-cred'){
+                    sh """
+                    terraform init
                     pwd
-                    sh "terraform init"
+                    """
                 }
             }
         }
