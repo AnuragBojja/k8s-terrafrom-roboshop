@@ -1,0 +1,53 @@
+pipeline {
+    agent {
+        node { label "AGENT-1" }
+    } 
+
+    options{
+        timeout(time: 1, unit: 'HOUR')
+        disableConcurrentBuilds()
+        ansiColor('xterm') 
+    }
+    environment {
+        PROJECT = 'roboshop'
+        COMPONENT = 'catalogue'
+        AWS_REGION = 'us-east-1'
+        AWS_ACC_ID = '793770371113'
+    }
+    stages {
+        stage("init") {
+            steps {
+                withAWS(region: 'us-east-1', credentials: 'aws-cred'){
+                    sh "terraform init"
+                }
+            }
+        }
+        stage("plan") {
+            steps {
+                withAWS(region: 'us-east-1', credentials: 'aws-cred'){
+                    sh "terraform plan"
+                }
+            }
+        }
+        // stage("apply"){
+        //     parameters {
+        //         string(name: 'IMAGE_TAG', defaultValue: 'latest', description: 'Docker image tag to build/deploy')
+        //         choice(name: 'ENVIRONMENT', choices: ['dev', 'qa', 'prod'], description: 'Target environment')
+        //         booleanParam(name: 'RUN_TESTS', defaultValue: true, description: 'Run unit tests?')
+        //         booleanParam(name: 'DEPLOY', defaultValue: false, description: 'Deploy to EKS after build?')
+        //         text(name: 'RELEASE_NOTES', defaultValue: '', description: 'Multi-line release notes')
+        //     }
+        //     steps{
+        //         withAWS(region: 'us-east-1', credentials: 'aws-cred'){
+
+        //         }
+        //     }
+        // }
+    }
+    post {
+        always{
+            sh "echo 'this will be run always'"
+            cleanWs()
+        }
+    }
+}
