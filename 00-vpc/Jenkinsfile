@@ -45,16 +45,18 @@ pipeline {
                 choice(name: 'ENVIRONMENT', choices: ['dev', 'qa', 'prod'], description: 'Target environment')
             }
             steps{
-                if (params.ENVIRONMENT == 'dev'){
-                    withAWS(region: 'us-east-1', credentials: 'aws-cred'){
-                        sh """
-                        cd 00-vpc
-                        ls -l
-                        """
+                script{
+                    if (params.ENVIRONMENT == 'dev'){
+                        withAWS(region: 'us-east-1', credentials: 'aws-cred'){
+                            sh """
+                            cd 00-vpc
+                            ls -l
+                            """
+                        }
                     }
-                }
-                else{
-                    echo 'QA and Prod need permission.'
+                    else{
+                        echo 'QA and Prod need permission.'
+                    }
                 }
             }
         }
