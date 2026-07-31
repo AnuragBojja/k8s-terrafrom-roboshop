@@ -10,7 +10,7 @@ pipeline {
     }
     environment {
         PROJECT = 'roboshop'
-        COMPONENT = 'catalogue'
+        COMPONENT = '10-sg'
         AWS_REGION = 'us-east-1'
         AWS_ACC_ID = '793770371113'
     }
@@ -23,7 +23,8 @@ pipeline {
             steps {
                 withAWS(region: 'us-east-1', credentials: 'aws-cred'){
                     sh """
-                    cd 00-vpc
+                    echo 'env: ${params.ENVIRONMENT}'
+                    cd 10-sg
                     ls -l
                     pwd
                     terraform init
@@ -35,7 +36,7 @@ pipeline {
             steps {
                 withAWS(region: 'us-east-1', credentials: 'aws-cred'){
                     sh """
-                    cd 00-vpc
+                    cd 10-sg
                     ls -l
                     pwd
                     terraform plan
@@ -49,7 +50,7 @@ pipeline {
                     if (params.ENVIRONMENT == 'dev'){
                         withAWS(region: 'us-east-1', credentials: 'aws-cred'){
                             sh """
-                            cd 00-vpc
+                            cd 10-sg
                             ls -l
                             terraform apply -auto-approve
                             """
@@ -61,21 +62,15 @@ pipeline {
                 }
             }
         }
-        stage("Triggering Downstreem Job 00-sg"){
-            steps{
-                script{
-                    build job: '10-sg'
-                        wait: false
-                        propagate: false
-                        parameters: string(name: 'ENVIRONMENT',value: params.ENVIRONMENT)
-                }
-            }
-        }
     }
     post {
         always{
             sh "echo 'this will be run always'"
             // cleanWs()
+        }
+        success {
+            echo "✅ ${env.COMPONENT} created sucess"
+            // slackSend / emailext go here (plugins)
         }
     }
 }
