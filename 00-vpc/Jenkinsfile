@@ -14,6 +14,10 @@ pipeline {
         AWS_REGION = 'us-east-1'
         AWS_ACC_ID = '793770371113'
     }
+    parameters {
+                string(name: 'APPLIED_BY',defaultValue: 'Anurag', description: 'Terraform apply by')
+                choice(name: 'ENVIRONMENT', choices: ['dev', 'qa', 'prod'], description: 'Target environment')
+            }
     stages {
         stage("init") {
             steps {
@@ -40,10 +44,6 @@ pipeline {
             }
         }
         stage("apply"){
-            parameters {
-                string(name: 'Anurag', description: 'Terraform apply by')
-                choice(name: 'ENVIRONMENT', choices: ['dev', 'qa', 'prod'], description: 'Target environment')
-            }
             steps{
                 script{
                     if (params.ENVIRONMENT == 'dev'){
