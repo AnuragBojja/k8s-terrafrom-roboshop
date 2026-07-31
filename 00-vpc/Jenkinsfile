@@ -20,9 +20,9 @@ pipeline {
                 withAWS(region: 'us-east-1', credentials: 'aws-cred'){
                     sh """
                     cd 00-vpc
-                    terraform init
                     ls -l
                     pwd
+                    terraform init
                     """
                 }
             }
@@ -32,32 +32,37 @@ pipeline {
                 withAWS(region: 'us-east-1', credentials: 'aws-cred'){
                     sh """
                     cd 00-vpc
-                    terraform plan
                     ls -l
                     pwd
+                    terraform plan
                     """
                 }
             }
         }
-        // stage("apply"){
-        //     parameters {
-        //         string(name: 'IMAGE_TAG', defaultValue: 'latest', description: 'Docker image tag to build/deploy')
-        //         choice(name: 'ENVIRONMENT', choices: ['dev', 'qa', 'prod'], description: 'Target environment')
-        //         booleanParam(name: 'RUN_TESTS', defaultValue: true, description: 'Run unit tests?')
-        //         booleanParam(name: 'DEPLOY', defaultValue: false, description: 'Deploy to EKS after build?')
-        //         text(name: 'RELEASE_NOTES', defaultValue: '', description: 'Multi-line release notes')
-        //     }
-        //     steps{
-        //         withAWS(region: 'us-east-1', credentials: 'aws-cred'){
-
-        //         }
-        //     }
-        // }
+        stage("apply"){
+            parameters {
+                string(name: 'Anurag', description: 'Terraform apply by')
+                choice(name: 'ENVIRONMENT', choices: ['dev', 'qa', 'prod'], description: 'Target environment')
+            }
+            steps{
+                if (params.ENVIRONMENT == 'dev'){
+                    withAWS(region: 'us-east-1', credentials: 'aws-cred'){
+                        sh """
+                        cd 00-vpc
+                        ls -l
+                        """
+                    }
+                }
+                else{
+                    echo 'QA and Prod need permission.'
+                }
+            }
+        }
     }
     post {
         always{
             sh "echo 'this will be run always'"
-            cleanWs()
+            // cleanWs()
         }
     }
 }
