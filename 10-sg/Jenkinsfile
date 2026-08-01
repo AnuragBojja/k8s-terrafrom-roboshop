@@ -62,13 +62,47 @@ pipeline {
                 }
             }
         }
-        stage("Triggering Downstreem Job 20-bastion"){
-            steps{
-                script{
-                    build job: '20-bastion'
-                        wait: true
-                        propagate: false
-                        parameters: [string(name: 'ENVIRONMENT',value: params.ENVIRONMENT), string(name: 'APPLIED_BY',value: env.COMPONENT)]
+        stage("Triggering Downstreem Job parallelly"){
+            parallel{
+                stage('triggering 20-bastion'){
+                    steps{
+                        script{
+                            build job: '20-bastion'
+                                wait: true
+                                propagate: false
+                                parameters: [string(name: 'ENVIRONMENT',value: params.ENVIRONMENT), string(name: 'APPLIED_BY',value: env.COMPONENT)]
+                        }   
+                    }
+                }
+                stage('triggering 30-sg-rules'){
+                    steps{
+                        script{
+                            build job: '30-sg-rules'
+                                wait: true
+                                propagate: false
+                                parameters: [string(name: 'ENVIRONMENT',value: params.ENVIRONMENT), string(name: 'APPLIED_BY',value: env.COMPONENT)]
+                        }   
+                    }
+                }
+                stage('triggering 60-ACM'){
+                    steps{
+                        script{
+                            build job: '60-ACM'
+                                wait: false
+                                propagate: false
+                                parameters: [string(name: 'ENVIRONMENT',value: params.ENVIRONMENT), string(name: 'APPLIED_BY',value: env.COMPONENT)]
+                        }   
+                    }
+                }
+                stage('triggering 40-ECR'){
+                    steps{
+                        script{
+                            build job: '40-ECR'
+                                wait: false
+                                propagate: false
+                                parameters: [string(name: 'ENVIRONMENT',value: params.ENVIRONMENT), string(name: 'APPLIED_BY',value: env.COMPONENT)]
+                        }   
+                    }
                 }
             }
         }
