@@ -10,7 +10,7 @@ pipeline {
     }
     environment {
         PROJECT = 'roboshop'
-        COMPONENT = 'catalogue'
+        COMPONENT = '00-vpc'
         AWS_REGION = 'us-east-1'
         AWS_ACC_ID = '793770371113'
     }
@@ -67,7 +67,7 @@ pipeline {
                     build job: '10-sg'
                         wait: false
                         propagate: false
-                        parameters: string(name: 'ENVIRONMENT',value: params.ENVIRONMENT)
+                        parameters: [string(name: 'ENVIRONMENT',value: params.ENVIRONMENT), string(name: 'APPLIED_BY',value: env.COMPONENT)]
                 }
             }
         }

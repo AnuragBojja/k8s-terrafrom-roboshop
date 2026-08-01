@@ -10,7 +10,7 @@ pipeline {
     }
     environment {
         PROJECT = 'roboshop'
-        COMPONENT = '10-sg'
+        COMPONENT = '20-bastion'
         AWS_REGION = 'us-east-1'
         AWS_ACC_ID = '793770371113'
     }
@@ -24,7 +24,7 @@ pipeline {
                 withAWS(region: 'us-east-1', credentials: 'aws-cred'){
                     sh """
                     echo 'env: ${params.ENVIRONMENT}'
-                    cd 10-sg
+                    cd 20-bastion
                     ls -l
                     pwd
                     terraform init
@@ -36,7 +36,7 @@ pipeline {
             steps {
                 withAWS(region: 'us-east-1', credentials: 'aws-cred'){
                     sh """
-                    cd 10-sg
+                    cd 20-bastion
                     ls -l
                     pwd
                     terraform plan
@@ -50,7 +50,7 @@ pipeline {
                     if (params.ENVIRONMENT == 'dev'){
                         withAWS(region: 'us-east-1', credentials: 'aws-cred'){
                             sh """
-                            cd 10-sg
+                            cd 20-bastion
                             ls -l
                             terraform apply -auto-approve
                             """
@@ -59,16 +59,6 @@ pipeline {
                     else{
                         echo 'QA and Prod need permission.'
                     }
-                }
-            }
-        }
-        stage("Triggering Downstreem Job 20-bastion"){
-            steps{
-                script{
-                    build job: '20-bastion'
-                        wait: true
-                        propagate: false
-                        parameters: [string(name: 'ENVIRONMENT',value: params.ENVIRONMENT), string(name: 'APPLIED_BY',value: env.COMPONENT)]
                 }
             }
         }
