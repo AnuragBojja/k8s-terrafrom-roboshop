@@ -1,0 +1,76 @@
+pipeline {
+    agent {
+        node { label "AGENT-1" }
+    } 
+
+    options{
+        timeout(time: 1, unit: 'HOURS')
+        disableConcurrentBuilds()
+        ansiColor('xterm') 
+    }
+    environment {
+        PROJECT = 'roboshop'
+        COMPONENT = '70-ingress-alb'
+        AWS_REGION = 'us-east-1'
+        AWS_ACC_ID = '793770371113'
+    }
+    parameters {
+                string(name: 'APPLIED_BY',defaultValue: 'Anurag', description: 'Terraform apply by')
+                choice(name: 'ENVIRONMENT', choices: ['dev', 'qa', 'prod'], description: 'Target environment')
+            }
+    stages {
+        stage("init") {
+            steps {
+                withAWS(region: 'us-east-1', credentials: 'aws-cred'){
+                    sh """
+                    echo 'env: ${params.ENVIRONMENT}'
+                    cd 70-ingress-alb
+                    ls -l
+                    pwd
+                    terraform init
+                    """
+                }
+            }
+        }
+        stage("plan") {
+            steps {
+                withAWS(region: 'us-east-1', credentials: 'aws-cred'){
+                    sh """
+                    cd 70-ingress-alb
+                    ls -l
+                    pwd
+                    terraform plan
+                    """
+                }
+            }
+        }
+        stage("apply"){
+            steps{
+                script{
+                    if (params.ENVIRONMENT == 'dev'){
+                        withAWS(region: 'us-east-1', credentials: 'aws-cred'){
+                            sh """
+                            cd 70-ingress-alb
+                            ls -l
+                            terraform apply -auto-approve
+                            """
+                        }
+                    }
+                    else{
+                        echo 'QA and Prod need permission.'
+                    }
+                }
+            }
+        }
+    }
+    post {
+        always{
+            sh "echo 'this will be run always'"
+            // cleanWs()
+        }
+        success {
+            echo "✅ ${env.COMPONENT} created sucess"
+            // slackSend / emailext go here (plugins)
+        }
+    }
+}

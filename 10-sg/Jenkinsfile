@@ -68,7 +68,7 @@ pipeline {
                     steps{
                         script{
                             build job: '20-bastion'
-                                wait: true
+                                wait: false
                                 propagate: false
                                 parameters: [string(name: 'ENVIRONMENT',value: params.ENVIRONMENT), string(name: 'APPLIED_BY',value: env.COMPONENT)]
                         }   
@@ -78,7 +78,7 @@ pipeline {
                     steps{
                         script{
                             build job: '30-sg-rules'
-                                wait: true
+                                wait: false
                                 propagate: false
                                 parameters: [string(name: 'ENVIRONMENT',value: params.ENVIRONMENT), string(name: 'APPLIED_BY',value: env.COMPONENT)]
                         }   
