@@ -20,15 +20,15 @@ pipeline {
                 booleanParam(name: 'DESTROY_APPROVAL', defaultValue: false, description: 'Destroy resources')
             }
     stages {
-        stage('triggering 70-ingress-alb'){
+        stage('Destroying 70-ingress-alb'){
             when { expression { return params.DESTROY_APPROVAL } }
             steps{
                 script{
                     script{
                         sh """
+                            cd 70-ingress-alb
                             ls -l
-                            cd 00-vpc
-                            ls -l
+                            terraform plan 
                         """
                     }
                 }   
