@@ -30,10 +30,10 @@ sudo install -m 0755 /tmp/eksctl /usr/local/bin && rm /tmp/eksctl
 
 cd /home/ec2-user
 su - ec2-user -c '
-  git clone https://github.com/AnuragBojja/eksctl.git
-  cd eksctl 
-  eksctl create cluster -f node.yaml
-  cd ..
+  # git clone https://github.com/AnuragBojja/eksctl.git
+  # cd eksctl 
+  # eksctl create cluster -f node.yaml
+  # cd ..
 
   echo "..."
   echo "..."

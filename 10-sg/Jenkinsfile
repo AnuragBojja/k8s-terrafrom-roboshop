@@ -67,43 +67,75 @@ pipeline {
                 stage('triggering 20-bastion'){
                     steps{
                         script{
-                            build job: '20-bastion'
-                                wait: false
-                                propagate: false
+                            build (
+                                job: '20-bastion',
+                                wait: false,
+                                propagate: false,
                                 parameters: [string(name: 'ENVIRONMENT',value: params.ENVIRONMENT), string(name: 'APPLIED_BY',value: env.COMPONENT)]
+                            )
                         }   
                     }
                 }
                 stage('triggering 30-sg-rules'){
                     steps{
                         script{
-                            build job: '30-sg-rules'
-                                wait: false
-                                propagate: false
+                            build (
+                                job: '30-sg-rules',
+                                wait: false,
+                                propagate: false,
                                 parameters: [string(name: 'ENVIRONMENT',value: params.ENVIRONMENT), string(name: 'APPLIED_BY',value: env.COMPONENT)]
-                        }   
-                    }
-                }
-                stage('triggering 60-ACM'){
-                    steps{
-                        script{
-                            build job: '60-ACM'
-                                wait: false
-                                propagate: false
-                                parameters: [string(name: 'ENVIRONMENT',value: params.ENVIRONMENT), string(name: 'APPLIED_BY',value: env.COMPONENT)]
+                            )
                         }   
                     }
                 }
                 stage('triggering 40-ECR'){
                     steps{
                         script{
-                            build job: '40-ECR'
-                                wait: false
-                                propagate: false
+                            build (
+                                job: '40-ECR',
+                                wait: false,
+                                propagate: false,
                                 parameters: [string(name: 'ENVIRONMENT',value: params.ENVIRONMENT), string(name: 'APPLIED_BY',value: env.COMPONENT)]
+                            )
                         }   
                     }
                 }
+                stage('triggering 60-ACM'){
+                    steps{
+                        script{
+                            build (
+                                job: '60-ACM',
+                                wait: true,
+                                propagate: true,
+                                parameters: [string(name: 'ENVIRONMENT',value: params.ENVIRONMENT), string(name: 'APPLIED_BY',value: env.COMPONENT)]
+                            )
+                        }   
+                    }
+                }
+                stage('triggering 80-EKS'){
+                    steps{
+                        script{
+                            build (
+                                job: '80-EKS',
+                                wait: false,
+                                propagate: false,
+                                parameters: [string(name: 'ENVIRONMENT',value: params.ENVIRONMENT), string(name: 'APPLIED_BY',value: env.COMPONENT)]
+                            )
+                        }   
+                    }
+                }
+            }
+        }
+        stage('triggering 70-ingress-alb'){
+            steps{
+                script{
+                    build (
+                        job: '70-ingress-alb',
+                        wait: false,
+                        propagate: false,
+                        parameters: [string(name: 'ENVIRONMENT',value: params.ENVIRONMENT), string(name: 'APPLIED_BY',value: env.COMPONENT)]
+                    )
+                }   
             }
         }
     }
