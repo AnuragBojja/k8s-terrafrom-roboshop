@@ -64,18 +64,18 @@ pipeline {
         }
         stage("Triggering Downstreem Job parallelly"){
             parallel{
-                stage('triggering 20-bastion'){
-                    steps{
-                        script{
-                            build (
-                                job: '20-bastion',
-                                wait: false,
-                                propagate: false,
-                                parameters: [string(name: 'ENVIRONMENT',value: params.ENVIRONMENT), string(name: 'APPLIED_BY',value: env.COMPONENT)]
-                            )
-                        }   
-                    }
-                }
+                // stage('triggering 20-bastion'){
+                //     steps{
+                //         script{
+                //             build (
+                //                 job: '20-bastion',
+                //                 wait: false,
+                //                 propagate: false,
+                //                 parameters: [string(name: 'ENVIRONMENT',value: params.ENVIRONMENT), string(name: 'APPLIED_BY',value: env.COMPONENT)]
+                //             )
+                //         }   
+                //     }
+                // }
                 stage('triggering 30-sg-rules'){
                     steps{
                         script{
