@@ -124,6 +124,18 @@ pipeline {
                         }   
                     }
                 }
+                stage('triggering 90-peering'){
+                    steps{
+                        script{
+                            build (
+                                job: '90-peering',
+                                wait: false,
+                                propagate: false,
+                                parameters: [string(name: 'ENVIRONMENT',value: params.ENVIRONMENT), string(name: 'APPLIED_BY',value: env.COMPONENT)]
+                            )
+                        }   
+                    }
+                }
             }
         }
         stage('triggering 70-ingress-alb'){
