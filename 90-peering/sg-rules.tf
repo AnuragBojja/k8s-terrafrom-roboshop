@@ -5,4 +5,8 @@ resource "aws_vpc_security_group_ingress_rule" "jenkins_agent-eks_control_plane"
   from_port   = 443
   ip_protocol = "tcp"
   to_port     = 443
+
+  depends_on = [
+    aws_vpc_peering_connection.roboshop-to-default
+  ]
 }
